@@ -2,12 +2,12 @@
 #include <vector>
 int const ALPH = 26;
 
-struct Node {
+struct SimpleList {
     std::string value;
-    Node* next = nullptr;
+    SimpleList* next = nullptr;
 };
 
-std::vector<Node*> hashTable(ALPH, nullptr);
+std::vector<SimpleList*> hashTable(ALPH, nullptr);
 
 int getIdx(char c) {
     return c - 'a';
@@ -20,11 +20,11 @@ int main() {
         std::string currWord;
         std::cin >> currWord;
         int key = getIdx(currWord[0]);
-        Node* newNode = new Node{currWord, hashTable[key]};
+        SimpleList* newNode = new SimpleList{currWord, hashTable[key]};
         hashTable[key] = newNode;
     }
     for (int i = 0; i < ALPH; ++i) {
-        Node* head = hashTable[i];
+        SimpleList* head = hashTable[i];
         std::cout << "Letter " << (char) (i + 'a') << ": \n";
         if (head == nullptr) continue;
         while (head != nullptr) {

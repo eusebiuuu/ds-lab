@@ -2,15 +2,15 @@
 #define ii pair<int, int>
 using namespace std;
 
-struct Node {
+struct SimpleList {
     int val, pos;
-    Node* next;
-    explicit Node(int val, int pos) : val(val), pos(pos), next(nullptr) {}
+    SimpleList* next;
+    explicit SimpleList(int val, int pos) : val(val), pos(pos), next(nullptr) {}
 };
 
 class Stack {
 private:
-    Node* top;
+    SimpleList* top;
 
 public:
     Stack() : top(nullptr) {}
@@ -26,24 +26,22 @@ public:
     }
 
     void push(int val, int pos) {
-        Node* newNode = new Node(val, pos);
+        SimpleList* newNode = new SimpleList(val, pos);
         newNode->next = top;
         top = newNode;
     }
 
     void pop() {
         if (isEmpty()) {
-            cout << "Stack underflow! Cannot pop from an empty stack." << endl;
             return;
         }
-        Node* temp = top;
+        SimpleList* temp = top;
         top = top->next;
         delete temp;
     }
 
     ii peek() {
         if (isEmpty()) {
-            cout << "Stack is empty!" << endl;
             return {-1, -1};
         }
         return {top->val, top->pos};
@@ -87,7 +85,6 @@ public:
 
     void dequeue() {
         if (isEmpty()) {
-            cout << "Queue underflow! Cannot dequeue from an empty queue." << endl;
             return;
         }
         QueueNode* temp = front;
@@ -101,7 +98,7 @@ public:
     int peek() {
         if (isEmpty()) {
             cout << "Queue is empty!" << endl;
-            return -1; // Assuming -1 as invalid value
+            return -1;
         }
         return front->data;
     }
@@ -129,7 +126,7 @@ int main() {
   }
   auto *ansQueue = new Queue();
   for (int i = 1; i <= n; ++i) {
-    ansQueue->enqueue(closestBigger[i]);
+      ansQueue->enqueue(closestBigger[i]);
   }
   while (!ansQueue->isEmpty()) {
       cout << ansQueue->peek() << ' ';

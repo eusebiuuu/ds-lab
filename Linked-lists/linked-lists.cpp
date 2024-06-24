@@ -1,87 +1,212 @@
 #include <bits/stdc++.h>
-#define ii pair<int, int>
 using namespace std;
 
-struct Node {
-  int val;
-  Node* next;
-  explicit Node(int val = 0): val(val), next(nullptr) {}
+class Node {
+public:
+    int key;
+    Node* next;
+
+    Node(int k) : key(k), next(nullptr) {}
 };
 
-void insertNode(Node* head, Node* newNode) {
-  int nodeVal = newNode->val;
-  Node* currNode = head;
-  while (true) {
-    if (currNode->next == nullptr or currNode->next->val > nodeVal) {
-        break;
+class DNode {
+public:
+    int key;
+    DNode* next;
+    DNode* prev;
+
+    DNode(int k) : key(k), next(nullptr), prev(nullptr) {}
+};
+
+class CNode {
+public:
+    int key;
+    CNode* next;
+
+    CNode(int k) : key(k), next(nullptr) {}
+};
+
+class SimpleLinkedList {
+private:
+    Node* head;
+
+public:
+    SimpleLinkedList() : head(nullptr) {}
+
+    void insert(int key) {
+        Node* new_node = new Node(key);
+        new_node->next = head;
+        head = new_node;
     }
-    currNode = currNode->next;
-  }
-  Node* nextNode = currNode->next;
-  currNode->next = newNode;
-  if (nextNode != nullptr) {
-      newNode->next = nextNode;
-  }
-}
 
-// !!! Removes the element from the position pos, not the element pointed by something
-void deleteNode(Node* head, int pos) {
-  int currPos = 1;
-  Node* prevNode = head;
-  Node* currNode = head->next;
-  while (currPos < pos) {
-    prevNode = currNode;
-    currNode = currNode->next;
-    currPos++;
-  }
-  prevNode->next = currNode->next;
-}
-
-Node* getNode(Node* &head, int k) {
-  Node* currNode = head;
-  while (currNode != nullptr and currNode->val != k) {
-    currNode = currNode->next;
-  }
-  return currNode;
-}
-
-void printList(Node* head) {
-  Node* currNode = head->next;
-  while (currNode != nullptr) {
-    cout << currNode->val << ' ';
-    currNode = currNode->next;
-  }
-  cout << '\n';
-}
-
-void deleteList(Node *head) {
-    while (head != nullptr) {
-        Node* next = head->next;
-        delete head;
-        head = next;
+    void print_keys() {
+        Node* current = head;
+        while (current) {
+            cout << current->key << " -> ";
+            current = current->next;
+        }
+        cout << "None" << std::endl;
     }
-}
+
+    bool search(int key) {
+        Node* current = head;
+        while (current) {
+            if (current->key == key) {
+                return true;
+            }
+            current = current->next;
+        }
+        return false;
+    }
+
+    bool delete_node(int key) {
+        Node* current = head;
+        Node* previous = nullptr;
+
+        while (current) {
+            if (current->key == key) {
+                if (previous) {
+                    previous->next = current->next;
+                } else {
+                    head = current->next;
+                }
+                delete current;
+                return true;
+            }
+            previous = current;
+            current = current->next;
+        }
+        return false;
+    }
+};
+
+class DoublyLinkedList {
+private:
+    DNode* head;
+
+public:
+    DoublyLinkedList() : head(nullptr) {}
+
+    void insert(int key) {
+        DNode* new_node = new DNode(key);
+        new_node->next = head;
+        if (head != nullptr) {
+            head->prev = new_node;
+        }
+        head = new_node;
+    }
+
+    void print_keys() {
+        DNode* current = head;
+        while (current) {
+            cout << current->key << " <-> ";
+            current = current->next;
+        }
+    }
+
+    bool search(int key) {
+        DNode* current = head;
+        while (current) {
+            if (current->key == key) {
+                return true;
+            }
+            current = current->next;
+        }
+        return false;
+    }
+
+    bool delete_node(int key) {
+        DNode* current = head;
+
+        while (current) {
+            if (current->key == key) {
+                if (current->prev) {
+                    current->prev->next = current->next;
+                } else {
+                    head = current->next;
+                }
+                if (current->next) {
+                    current->next->prev = current->prev;
+                }
+                delete current;
+                return true;
+            }
+            current = current->next;
+        }
+        return false;
+    }
+};
+
+class CircularLinkedList {
+private:
+    CNode* tail;
+
+public:
+    CircularLinkedList() : tail(nullptr) {}
+
+    void insert(int key) {
+        CNode* new_node = new CNode(key);
+        if (!tail) {
+            new_node->next = new_node;
+            tail = new_node;
+        } else {
+            new_node->next = tail->next;
+            tail->next = new_node;
+            tail = new_node;
+        }
+    }
+
+    void print_keys() {
+        if (!tail) {
+            std::cout << "None" << std::endl;
+            return;
+        }
+        CNode* current = tail->next;
+        do {
+            cout << current->key << " -> ";
+            current = current->next;
+        } while (current != tail->next);
+        cout << "(back to head)" << std::endl;
+    }
+
+    bool search(int key) {
+        if (!tail) return false;
+        CNode* current = tail->next;
+        do {
+            if (current->key == key) {
+                return true;
+            }
+            current = current->next;
+        } while (current != tail->next);
+        return false;
+    }
+
+    bool delete_node(int key) {
+        if (!tail) return false;
+
+        CNode* current = tail->next;
+        CNode* previous = tail;
+        do {
+            if (current->key == key) {
+                if (current == tail) {
+                    if (current->next == tail) {
+                        tail = nullptr;
+                    } else {
+                        tail = previous;
+                    }
+                }
+                previous->next = current->next;
+                delete current;
+                return true;
+            }
+            previous = current;
+            current = current->next;
+        } while (current != tail->next);
+        return false;
+    }
+};
 
 int main() {
-  ios_base::sync_with_stdio(false); cin.tie(nullptr);
-  Node* head = new Node();
-  int n;
-  cin >> n;
-  for (int i = 0; i < n; ++i) {
-      int num;
-      cin >> num;
-      insertNode(head, new Node(num));
-  }
-  printList(head);
-  Node* aux = getNode(head, 8);
-  cout << aux->val << '\n';
-  deleteNode(head, 4);
-  aux = getNode(head, 8);
-  if (aux == nullptr) {
-      cout << "The element doesn't exist\n";
-  } else {
-      cout << aux->val << '\n';
-  }
-  deleteList(head);
-  return 0;
+    //
+    return 0;
 }
